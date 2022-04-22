@@ -86,10 +86,30 @@ class PgrStereo():
         # for
     # enable_embedded_timestamp
 
+    @property
     def isConnected(self):
         return self.cam_left.isConnected and self.cam_right.isConnected
 
-    # isConnected    
+    # property: isConnected   
+
+    def get_camera_info(self): 
+        msg = ""
+        for name, cam in zip(['Left', 'Right'], [self.cam_left, self.cam_right]):
+            cam_info = cam.getCameraInfo()
+            msg += (f'*** [{name}] CAMERA INFORMATION ***\n'
+                    f'Serial number - {cam_info.serialNumber:d}\n'
+                    f'Camera model - {cam_info.modelName.decode():s}\n'
+                    f'Camera vendor - {cam_info.vendorName.decode():s}\n'
+                    f'Sensor - {cam_info.sensorInfo.decode():s}\n'
+                    f'Resolution - {cam_info.sensorResolution.decode():s}\n'
+                    f'Firmware version - {cam_info.firmwareVersion.decode():s}\n'
+                    f'Firmware build time - {cam_info.firmwareBuildTime.decode():s}'
+                    )
+        # for
+
+        return msg
+
+    # get_camera_info
 
     def grab_image_pair(self):
         ''' Grabs an image pair from each camera. Returns None if there is an error '''
@@ -117,20 +137,9 @@ class PgrStereo():
 
     
     def print_camera_info(self):
-        print("PgrStereo Camera:")
-        for k, cam in zip(['Left', 'Right'], [self.cam_left, self.cam_right]):
-            cam_info = cam.getCameraInfo()
-            print('\n*** [{:s}] CAMERA INFORMATION ***\n'.format(k.upper()))
-            print('Serial number - %d' % cam_info.serialNumber)
-            print('Camera model - %s' % cam_info.modelName)
-            print('Camera vendor - %s' % cam_info.vendorName)
-            print('Sensor - %s' % cam_info.sensorInfo)
-            print('Resolution - %s' % cam_info.sensorResolution)
-            print('Firmware version - %s' % cam_info.firmwareVersion)
-            print('Firmware build time - %s' % cam_info.firmwareBuildTime)
-            print()
-            
-        # for
+        print( "PgrStereo Camera:" )
+        print( self.get_camera_info() )
+
     # print_camera_info
 
     def startCapture(self):

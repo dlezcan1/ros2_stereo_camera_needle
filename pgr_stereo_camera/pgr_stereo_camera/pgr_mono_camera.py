@@ -5,13 +5,13 @@
 import rclpy
 
 # custom imports
-from .nodes import StereoCameraNode
+from .nodes import CameraNode
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = StereoCameraNode( "StereoCameraNode" )
+    node = CameraNode( "MonocularCameraNode" )
 
     rclpy.spin(node)
 

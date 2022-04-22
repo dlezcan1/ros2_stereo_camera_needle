@@ -1,5 +1,5 @@
 from setuptools import setup
-
+import glob
 package_name = 'pgr_stereo_camera'
 
 setup(
@@ -10,6 +10,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + "/launch", glob.glob( "launch/*.launch.*" )),
+        ('share/' + package_name + '/config', glob.glob( "config/*.yaml" )),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,7 +22,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'pgr_stereo_camera = pgr_stereo_camera.pgr_stereo_camera:main'
+            f'pgr_stereo_camera = {package_name}.pgr_stereo_camera:main',
+            f'pgr_mono_camera = {package_name}.pgr_mono_camera:main',
         ],
     },
 )

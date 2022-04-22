@@ -1,0 +1,20 @@
+/**/left:
+  MonocularCameraNode:
+    ros__parameters:
+      camera:
+        index: 0
+
+/**/right:
+  MonocularCameraNode:
+    ros__parameters:
+      camera:
+        index: 1
+
+/**:
+  StereoCameraNode:
+    ros__parameters:
+      camera:
+        left:
+          index: 0
+        right:
+          index: 1
