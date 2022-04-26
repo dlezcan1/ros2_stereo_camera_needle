@@ -4,7 +4,7 @@ from cv_bridge import CvBridge
 
 # ROS messages
 from std_msgs.msg import Header
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo, Image
 
 
 class ImageConversions:
@@ -87,3 +87,28 @@ class ImageConversions:
     # ImageMsgTocv
 
 # class: ImageConversions
+
+def duplicate_CameraInfomsg( msg_old: CameraInfo ):
+    msg_new = CameraInfo()
+
+    msg_new.header = msg_old.header
+
+    msg_new.height = msg_old.height
+    msg_new.width = msg_old.width
+
+    msg_new.k = msg_old.k
+    msg_new.r = msg_old.r
+    msg_new.p = msg_old.p
+
+    msg_new.distortion_model = msg_old.distortion_model
+    msg_new.d                = msg_old.d
+
+    # - optional operational parameters
+    msg_new.roi = msg_old.roi
+    
+    msg_new.binning_x = msg_old.binning_x
+    msg_new.binning_y = msg_old.binning_y
+
+    return msg_new
+
+# duplicate_CameraInfo_msg
