@@ -65,11 +65,14 @@ class CameraNode( Node ):
         
         # ROS parameters
         self.camera_index = self.declare_parameter( self.PARAM_CAMERA_IDX, 0 ).get_parameter_value().integer_value
+
+        self.get_logger().info(f"Current camera index: {self.camera_index}")
         
         # - camera info paramters
         self.msg_camerainfo = CameraInfo()
 
-        intrinsic_mtx = np.array( self.declare_parameter( self.PARAM_CAMERA_INFO_INT ).get_parameter_value().double_array_value ).reshape(3,3)
+        pv = self.declare_parameter( self.PARAM_CAMERA_INFO_INT ).get_parameter_value()
+        intrinsic_mtx = np.array( pv.double_array_value ).reshape(3,3)
         rotation_mtx  = np.array( self.declare_parameter( self.PARAM_CAMERA_INFO_ROT,   np.eye(3).ravel().tolist() ).get_parameter_value().double_array_value) .reshape(3,3)
         translation   = np.array( self.declare_parameter( self.PARAM_CAMERA_INFO_TRANS, np.zeros(3).tolist() ).get_parameter_value().double_array_value )
         
