@@ -1,11 +1,14 @@
+from matplotlib import container
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, EmitEvent
 from launch.events import Shutdown
 from launch.conditions import LaunchConfigurationEquals
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
-from launch_ros.actions import Node
+from launch_ros.actions import Node, ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare
+
 
 
 def generate_launch_description():
@@ -40,6 +43,12 @@ def generate_launch_description():
                                      default_value="false",
                                      choices=['true', 'false'],
                                      description="Whether to run stereo camera's synchronized or not."
+    )
+
+    arg_imageproc = DeclareLaunchArgument('useImageProc',
+                                          default_value='true',
+                                          choices=['true', 'false'],
+                                          description="Whether to use image processing or not."
     )
 
     # nodes
@@ -81,6 +90,95 @@ def generate_launch_description():
         ],
     )
 
+    container_img_proc_l = ComposableNodeContainer(
+        name="left_image_proc_container",
+        package='rclcpp_components',
+        executable='component_container',
+        namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'left']),
+        condition=LaunchConfigurationEquals('useImageProc', 'true'),
+        composable_node_descriptions=[
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::DebayerNode',
+                name='left_debayer_node',
+                namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'left']),
+            ),
+            # Example of rectifying an image
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::RectifyNode',
+                name='left_rectify_mono_node',
+                namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'left']),
+                # Remap subscribers and publishers
+                remappings=[
+                    # Subscriber remap
+                    ('image', 'image_mono'),
+                    ('camera_info', 'camera_info'),
+                    ('image_rect', 'image_rect')
+                ],
+            ),
+            # Example of rectifying an image
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::RectifyNode',
+                name='left_rectify_color_node',
+                namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'left']),
+                # Remap subscribers and publishers
+                remappings=[
+                    # Subscriber remap
+                    ('image', 'image_color'),
+                    # Publisher remap
+                    ('image_rect', 'image_rect_color')
+                ],
+            )],
+        output='screen'
+    )
+    
+    container_img_proc_r = ComposableNodeContainer(
+        name="right_image_proc_container",
+        package='rclcpp_components',
+        executable='component_container',
+        namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'right']),
+        condition=LaunchConfigurationEquals('useImageProc', 'true'),
+        composable_node_descriptions=[
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::DebayerNode',
+                name='right_debayer_node',
+                namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'right']),
+            ),
+            # Example of rectifying an image
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::RectifyNode',
+                name='right_rectify_mono_node',
+                namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'right']),
+                # Remap subscribers and publishers
+                remappings=[
+                    # Subscriber remap
+                    ('image', 'image_mono'),
+                    ('camera_info', 'camera_info'),
+                    ('image_rect', 'image_rect')
+                ],
+            ),
+            # Example of rectifying an image
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::RectifyNode',
+                name='right_rectify_color_node',
+                namespace=PathJoinSubstitution([LaunchConfiguration('ns'), 'right']),
+                # Remap subscribers and publishers
+                remappings=[
+                    # Subscriber remap
+                    ('image', 'image_color'),
+                    # Publisher remap
+                    ('image_rect', 'image_rect_color')
+                ],
+            )],
+        output='screen'
+    )
+    
+
     # configure launch description
     # - arguments
     ld.add_action( arg_ns )
@@ -90,11 +188,16 @@ def generate_launch_description():
     ld.add_action( arg_rosparam_s )
     
     ld.add_action( arg_sync )
+    ld.add_action( arg_imageproc )
     
     # - nodes
     ld.add_action( node_stereo_sync )
     ld.add_action( node_mono_left )
     ld.add_action( node_mono_right )
+
+    # - containers
+    ld.add_action( container_img_proc_l )
+    ld.add_action( container_img_proc_r )
 
     return ld
 

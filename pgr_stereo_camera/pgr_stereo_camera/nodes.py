@@ -28,7 +28,7 @@ CAMERA_DEFAULTS = {
 CAMERA_TOPIC_NAMES = {
     # monocular vision
     "info"           : "camera_info",
-    "image"          : "image_color",
+    "image"          : "image_raw",
     "connected"      : "connected",
 }
 
