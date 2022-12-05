@@ -1,0 +1,16 @@
+{
+	"stereo parameters mat file location": "stereo_params_blackfly_opencv-struct.mat",
+	"contrast enhance": {
+		"left": [0.4, 0.0],
+		"right": [0.4, 0.0]
+	},
+	"ROI": {
+		"left": [0, 0, 1439, 1179],
+		"right": [0, 0, 1439, 1179]
+	},
+	"zoom": 1.0,
+	"window size": [201,51],
+	"alpha": 0.55,
+	"subtract threshold": 55.0
+
+}

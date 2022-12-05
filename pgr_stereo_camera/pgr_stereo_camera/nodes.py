@@ -15,14 +15,14 @@ from sensor_msgs.msg import CameraInfo, Image
 # services
 
 # custom imports
-from .PgrCamera import PgrCamera
-from .PgrStereo import PgrStereo
+from .FlyCamera import PgrCamera
+from .FlyStereo import PgrStereo
 from .utilities import ImageConversions, duplicate_CameraInfomsg
 
 # constants
 CAMERA_DEFAULTS = {
-    'height': 768,
-    'width' : 1024,
+    'height': 1080, #768,
+    'width' : 1440, #1024,
 }
 
 CAMERA_TOPIC_NAMES = {
@@ -290,8 +290,8 @@ class StereoCameraNode( Node ):
     # connect_cameras
 
     def publish_camerasConnected(self):
-        self.pub_connected_l.publish( Bool( data=self.stereo_camera.cam_left.isConnected ) )
-        self.pub_connected_r.publish( Bool( data=self.stereo_camera.cam_right.isConnected ) )
+        self.pub_connected_l.publish( Bool( data=self.stereo_camera.cam_left.IsInitialized() ) )
+        self.pub_connected_r.publish( Bool( data=self.stereo_camera.cam_right.IsInitialized()) )
 
     # publish_cameraConnected
 
